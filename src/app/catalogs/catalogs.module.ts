@@ -7,7 +7,8 @@ import { CatalogsRoutingModule } from './catalogs-routing-module';
 import { IndexComponent } from './index/index.component';
 import { UserComponent } from './user/user.component';
 import { FileComponent } from './file/file.component';
-import { AgGridModule } from 'ag-grid-angular';
+import { UserService } from '../services/user.service';
+import { FileService } from '../services/file.service';
 
 @NgModule({
   declarations: [IndexComponent, UserComponent, FileComponent],
@@ -15,11 +16,12 @@ import { AgGridModule } from 'ag-grid-angular';
     CommonModule,
     FormsModule,
     HttpClientModule,
-    CatalogsRoutingModule,
-    AgGridModule
+    CatalogsRoutingModule
   ],
   providers: [
-    AuthService
+    AuthService,
+    UserService,
+    FileService
   ]
 })
 export class CatalogsModule { }

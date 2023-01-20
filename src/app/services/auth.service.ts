@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { UserI } from '../models/user';
 import { JwResponseI } from '../models/jw-response';
 import { tap } from 'rxjs';
@@ -17,11 +17,9 @@ export class AuthService {
 
   register( user: UserI ): Observable< JwResponseI > {
 
-    return this.httpClient.post<JwResponseI>(`${this.AUTH_SERVER}/api/auth/signup`, user).pipe(tap(
+    return this.httpClient.post<JwResponseI>(`${this.AUTH_SERVER}api/auth/signup`, user).pipe(tap(
       (res: JwResponseI) =>{
         if ( res ) {
-          // guardar el token
-          this.saveToken(res.accessToken);
         }
       })
     );
@@ -33,7 +31,7 @@ export class AuthService {
       (res: JwResponseI) =>{
         if ( res ) {
           // guardar el token
-          this.saveToken(res.accessToken);
+          this.saveToken(res.accessToken, res.id.toString(), res.username);
         }
       })
     );
@@ -44,8 +42,10 @@ export class AuthService {
     localStorage.removeItem('ACCESS_TOKEN');
   }
 
-  private saveToken(token: string): void {
+  private saveToken(token: string, userId: string, username: string): void {
     localStorage.setItem('ACCESS_TOKEN', token);
+    localStorage.setItem('userId', userId);
+    localStorage.setItem('username', username);
 
     this.token = token;
   }

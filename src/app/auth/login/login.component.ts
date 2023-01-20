@@ -11,6 +11,9 @@ import { NgForm } from '@angular/forms';
 })
 export class LoginComponent {
 
+  hiddenLogin: boolean = false;
+  hiddenRegis: boolean = true;
+
   constructor(private authService: AuthService, private router: Router){
 
   }
@@ -21,4 +24,20 @@ export class LoginComponent {
     });
   }
 
+  onRegister( form: NgForm ):void {
+    this.authService.register(form.value).subscribe( res => {
+      alert("Se ha registrado correctamente el usuario");
+      this.onLoginView();
+    });
+  }
+
+  public onLoginView(): void {
+    this.hiddenLogin = false;
+    this.hiddenRegis = true;
+  }
+
+  public onRegisView(): void {
+    this.hiddenLogin = true;
+    this.hiddenRegis = false;
+  }
 }

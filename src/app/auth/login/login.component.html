@@ -4,24 +4,35 @@
   <body>
 
     <section class="page-section" id="services">
-      <div class="container">
-        <div class="container">
-          <div class="login">
-            <div class="login-triangle"></div>
+      <div class="container"[hidden]="hiddenLogin">
+        <div class="login">
+          <div class="login-triangle"></div>
 
-            <h2 class="login-header">Log in</h2>
+          <h2 class="login-header">Log in</h2>
 
-            <form #frmLogin="ngForm" class="login-container" (ngSubmit)="onLogin(frmLogin)">
-              <p><input type="username" name="username" placeholder="username" ngModel required></p>
-              <p><input type="password" name="password" placeholder="Password" ngModel required></p>
-
-              <p><input type="submit" value="Entrar"></p>
-            </form>
-          </div>
+          <form #frmLogin="ngForm" class="login-container" (ngSubmit)="onLogin(frmLogin)">
+            <p><input type="username" name="username" placeholder="username" ngModel required></p>
+            <p><input type="password" name="password" placeholder="Password" ngModel required></p>
+            <p><a style="color: blue; cursor: pointer;" (click)="onRegisView();"><u>Registrate Aqui</u></a></p>
+            <p><input type="submit" value="Entrar"></p>
+          </form>
         </div>
       </div>
-      <br>
-      <br>
+      <div class="container"[hidden]="hiddenRegis">
+        <div class="login">
+          <div class="login-triangle"></div>
+
+          <h2 class="login-header">Registrate</h2>
+
+          <form #ResLogin="ngForm" class="login-container" (ngSubmit)="onRegister(ResLogin)">
+            <p><input type="username" name="username" placeholder="username" ngModel required></p>
+            <p><input type="password" name="password" placeholder="Password" ngModel required></p>
+            <p><input type="email" name="email" placeholder="E-mail" ngModel required></p>
+            <p><a style="color: red; cursor: pointer;" (click)="onLoginView();"><u>Regresar</u></a></p>
+            <p><input type="submit" value="Registrarse"></p>
+          </form>
+        </div>
+      </div>
       <br>
       <br>
       <br>

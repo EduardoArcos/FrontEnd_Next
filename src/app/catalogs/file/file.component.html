@@ -1,25 +1,169 @@
 <!DOCTYPE html>
 <html lang="en">
 
-    <body>
-        <!-- Navigation-->
-        <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
-            <div class="container">
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-                    Menu
-                    <i class="fas fa-bars ms-1"></i>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarResponsive">
-                    <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
-                      <li class="nav-item"><a class="nav-link" (click)="toIndex()">Inicio</a></li>
-                      <li class="nav-item"><a class="nav-link" (click)="toUser()">Usuarios</a></li>
-                      <li class="nav-item"><a class="nav-link" (click)="toFile()">Archivos</a></li>
-                      <li class="nav-item"><a class="nav-link" (click)="onlogout()">Salir</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+  <body>
+      <!-- Navigation-->
+      <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
+          <div class="container">
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                  Menu
+                  <i class="fas fa-bars ms-1"></i>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarResponsive">
+                  <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
+                    <li class="nav-item"><a class="nav-link" (click)="toIndex()">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" (click)="toUser()">Usuarios</a></li>
+                    <li class="nav-item"><a class="nav-link" (click)="toFile()">Archivos</a></li>
+                    <li class="nav-item"><a class="nav-link" (click)="onlogout()">Salir</a></li>
+                  </ul>
+              </div>
+          </div>
+      </nav>
 
+
+    <!-- List-->
+    <section class="page-section" id="list" [hidden]="hiddenList">
+      <div>
+          <div class="row">
+            <div class ="col-md-11 text-center">
+              <h2 class="section-heading text-uppercase">Listado de Archivos subidos</h2>
+            </div>
+            <div class="col-md-1">
+              <button
+                type="button"
+                class="btn btn-sm btn btn-success"
+                (click)="toAdd()">
+                Agregar
+              </button>
+            </div>
+          </div>
+
+          <div class="row text-center" style="padding-left: 10%;">
+              <div class="col-lg-10" ng-controller="tablecontroller">
+                <div class="table-responsive">
+                  <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                          <th>Id</th>
+                          <th>Nombre</th>
+                          <th>Url</th>
+                          <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody ng-animate="'animate'" *ngFor="let file of fileData">
+                      <tr>
+                        <td class="id">
+                          {{file.id}}
+                        </td>
+                        <td class="name">
+                          {{file.name}}
+                        </td>
+                        <td class="url">
+                          {{file.url}}
+                        </td>
+                        <td [width]="200">
+                          <button
+                            type="button"
+                            class="btn btn-sm btn btn-secondary"
+                            (click)="onEditUser(file)">
+                            Modificar
+                          </button>
+                          <br>
+                          <br>
+                          <button
+                            type="button"
+                            class="btn btn-sm btn-danger"
+                            (click)="onDeleteFile(file.name)">
+                            Eliminar
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+          </div>
+        </div>
+    </section>
+
+    <!-- Add-->
+    <section class="page-section" id="add" [hidden]="hiddenAdd">
+      <div>
+          <div class="row col-md-12 text-center">
+              <h2 class="section-heading text-uppercase">Agregar Archivo</h2>
+          </div>
+          <div class="row text-center" style="padding-left: 2%; padding-right: 2%;">
+            <form #addFileForm="ngForm" (ngSubmit)="onAddFile(addFileForm)">
+              <div>
+
+                <label for="name"><b>Nombre</b></label>
+                <input type="text" placeholder="Escribe el nombre para identificar el arhivo." name="name" id="name" ngModel required>
+
+                <div>
+                  <label for="file"><b>Elije un archivo a subir:</b></label>
+                  <br>
+                  <input type="file" id="file" name="file"
+                  (change)="onFileSave($event)" ngModel required>
+                </div>
+
+                <hr>
+
+                <div class="col-md-12">
+                  <button type="submit"
+                    class="btn btn-success paddingButton">
+                    Guardar
+                  </button>
+                  <button type="button"
+                    class="btn btn-danger"
+                    (click)="onListUser()">
+                    Regresar
+                  </button>
+                </div>
+              </div>
+
+            </form>
+
+          </div>
+        </div>
+    </section>
+
+    <!-- Edit-->
+    <section class="page-section" id="edit" [hidden]="hiddenEdit">
+      <div>
+          <div class="row col-md-12 text-center">
+              <h2 class="section-heading text-uppercase">Editar Archivo</h2>
+          </div>
+          <div class="row text-center" style="padding-left: 10%;">
+              <div class="col-md-8">
+                <div class="form-group">
+                  <label for="name">Nombre</label>
+                  <input type="text" name="name" required placeholder="Ingesa el nombre"
+                    [(ngModel)]="editFile.name" class="form-control"/>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div
+                  style=" padding-left: 5px;
+                  padding-right: 5px;
+                  padding-top: 25px;
+                  padding-bottom: 10px;">
+                <button type="button"
+                  class="btn btn-sm btn-success"
+                  (click)="onEditFileData(oldNameFile, editFile)">
+                  Guardar
+                </button>
+              </div>
+              <div class="col-md-12">
+                <button type="button"
+                  class="btn btn-sm btn-danger"
+                  (click)="onListUser()">
+                  Regresar
+                </button>
+              </div>
+              </div>
+          </div>
+        </div>
+    </section>
 
     </body>
 </html>

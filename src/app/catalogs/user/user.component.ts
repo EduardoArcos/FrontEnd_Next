@@ -1,10 +1,12 @@
-import { Component, ViewChild  } from '@angular/core';
+import { Component  } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
-import { AgGridAngular } from 'ag-grid-angular';
-import { CellClickedEvent, ColDef, GridReadyEvent } from 'ag-grid-community';
-import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Subscription } from 'rxjs';
+import { UserService } from '../../services/user.service';
+import { UserI } from '../../models/user';
+import { userClass } from '../../models/class/userClass';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-user',
@@ -13,43 +15,119 @@ import { HttpClient } from '@angular/common/http';
 })
 export class UserComponent {
 
-  constructor(private authService: AuthService, private router: Router, private http: HttpClient){
+  private subscriptions: Subscription[] = [];
+  public userData: UserI[] = [];
+  public editUser = new userClass;
+  public hiddenList = false;
+  public hiddenEdit = true;
+  public hiddenAdd = true;
+
+  public idUser: number = Number(localStorage.getItem("userId"))!;
+
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private userService: UserService
+  ){
+    this.getAllUsers();
+  }
+
+  public getAllUsers(): void {
+
+    this.subscriptions.push(
+      this.userService.getAllUser().subscribe(
+        ( resp: any[] ) => {
+
+          this.userData = resp.map((prop:any) => {
+            return {
+              ...prop
+            }
+          });
+
+        },
+        (errorResponse: HttpErrorResponse) => {
+          alert(`Ocurrio un error: ${errorResponse.message}`);
+
+        }
+      )
+    );
+  }
+
+  public onEditUser(user: UserI): void {
+    this.editUser = user;
+    this.hiddenList = true;
+    this.hiddenEdit = false;
+    this.hiddenAdd = true;
+  }
+
+  public onListUser():void {
+
+    this.hiddenList = false;
+    this.hiddenEdit = true;
+    this.hiddenAdd = true;
+  }
+
+  public toAdd(): void {
+
+    this.hiddenList = true;
+    this.hiddenEdit = true;
+    this.hiddenAdd = false;
+  }
+
+  public onAdd( form: NgForm ):void {
+
+    // detiene el proceso si el formulario no esta bien llenado
+    if (form.invalid) {
+      alert(`Favor de llenar el formulario antes de tratar de enviarlo.`);
+      return;
+    }
+
+    this.subscriptions.push(
+      this.userService.addUser(form.value).subscribe(
+        (response: UserI) => {
+          alert(`Se ha creado correctamente el usuario con el id: ${response.id}`);
+          this.getAllUsers();
+          this.onListUser();
+        },
+        (errorResponse: HttpErrorResponse) => {
+          alert(`Ocurrio un error: ${errorResponse.message}`);
+        }
+      )
+    );
 
   }
 
-  // Each Column Definition results in one Column.
-  public columnDefs: ColDef[] = [
-    { field: 'id' },
-    { field: 'username'},
-    { field: 'email'}
-  ];
+  public onEditUserF(user: UserI): void {
 
-  // DefaultColDef sets props common to all Columns
-  public defaultColDef: ColDef = {
-    sortable: true,
-    filter: true,
-  };
+    const formData = this.userService.createUserFormDate(user.username, user.email);
 
-  // Data that gets displayed in the grid
-  public rowData$!: Observable<any[]>;
+    this.subscriptions.push(
+      this.userService.editUser(formData).subscribe(
+        (response: UserI) => {
+          this.getAllUsers();
+          alert(`Se ha modificado correctamente el usuario con el id: ${response.id}`);
+          this.onListUser();
+        },
+        (errorResponse: HttpErrorResponse) => {
+          alert(`Ocurrio un error: ${errorResponse.message}`);
 
-  // For accessing the Grid's API
-  @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
-
-  // Example load data from sever
-  onGridReady(params: GridReadyEvent) {
-    this.rowData$ = this.http
-      .get<any[]>('https://www.ag-grid.com/example-assets/row-data.json');
+        }
+      )
+      );
   }
 
-  // Example of consuming Grid Event
-  onCellClicked( e: CellClickedEvent): void {
-    console.log('cellClicked', e);
-  }
+  public onDeleteUser(username: string): void {
 
-  // Example using Grid's API
-  clearSelection(): void {
-    this.agGrid.api.deselectAll();
+    this.subscriptions.push(
+      this.userService.deleteUserforUsername(username).subscribe(
+        (resp: UserI) => {
+
+          alert(`Se ha eliminado el usuario con el username: ${username}`);
+          this.getAllUsers();
+        }
+      )
+    );
+
   }
 
   onlogout():void {
