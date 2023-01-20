@@ -126,3 +126,7 @@ a {
 .paddingButton {
   margin-right: 20px;
 }
+
+.nav-link{
+  cursor: pointer;
+}

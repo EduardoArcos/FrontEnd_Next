@@ -99,6 +99,14 @@ export class UserComponent {
 
   public onEditUserF(user: UserI): void {
 
+    console.log(user);
+
+    // detiene el proceso si el formulario no esta bien llenado
+    if (user.email != null || user.email !== "") {
+      alert(`Favor de llenar el campo email.`);
+      return;
+    }
+
     const formData = this.userService.createUserFormDate(user.username, user.email);
 
     this.subscriptions.push(
@@ -133,7 +141,7 @@ export class UserComponent {
   onlogout():void {
     this.authService.logout();
 
-    this.router.navigateByUrl("/auth/login");
+    this.router.navigateByUrl("/login");
   }
 
   toUser():void {

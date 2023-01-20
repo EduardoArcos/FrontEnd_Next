@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { UserI } from '../models/user';
 import { JwResponseI } from '../models/jw-response';
 import { tap } from 'rxjs';
 import { Observable, BehaviorSubject } from 'rxjs';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Injectable()
 export class AuthService {
@@ -37,7 +38,7 @@ export class AuthService {
     );
   }
 
-  logout(): void {
+  public logout(): void {
     this.token = "";
     localStorage.removeItem('ACCESS_TOKEN');
   }
@@ -56,5 +57,19 @@ export class AuthService {
     }
 
     return this.token;
+  }
+
+
+  public isUserLoggedIn(): boolean {
+
+    this.getToken();
+    if (this.token != null && this.token !== '') {
+
+      return true;
+    } else {
+
+      this.logout();
+      return false;
+    }
   }
 }

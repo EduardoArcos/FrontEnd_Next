@@ -158,7 +158,7 @@ export class FileComponent {
   onlogout():void {
     this.authService.logout();
 
-    this.router.navigateByUrl("/auth/login");
+    this.router.navigateByUrl("/login");
   }
 
   toUser():void {
