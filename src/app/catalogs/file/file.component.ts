@@ -20,10 +20,16 @@ export class FileComponent {
   public editFile = new fileClass;
   public oldNameFile: string = "";
   public fileSave!: File | null;
+  public isVisible: boolean = false;
+  public entries: number = 10;
+  public tableOffset = 0;
+  dataTable: FileDataI[] = [];
 
   public hiddenList = false;
   public hiddenEdit = true;
   public hiddenAdd = true;
+  public hiddenEditMulti = true;
+  public hiddenAddMulti = true;
 
   constructor(
     private fileService: FileService,
@@ -60,6 +66,7 @@ export class FileComponent {
     this.hiddenList = true;
     this.hiddenEdit = false;
     this.hiddenAdd = true;
+    this.hiddenAddMulti = true;
   }
 
   public onEditFileData(oldName:string, file: FileDataI): void {
@@ -102,6 +109,29 @@ export class FileComponent {
     this.hiddenList = false;
     this.hiddenEdit = true;
     this.hiddenAdd = true;
+    this.hiddenAddMulti = true;
+  }
+
+  public onFileSaveMulti( event: any): void {
+    this.fileSave = event.target.files[0];
+
+    let contador = 0;
+
+    for ( let array of event.target.files ) {
+
+      let dataSave: FileDataI = {
+        id:0,
+        name:"",
+        url:"",
+        file:event.target.files[contador]!,
+      }
+
+      contador++;
+      this.dataTable.push(dataSave);
+    }
+
+    this.isVisible = true;
+    this.dataTable = [...this.dataTable];
   }
 
   public onAddFile( form: NgForm ): void {
@@ -143,6 +173,31 @@ export class FileComponent {
 
   }
 
+  public onAddFileMulti(): void {
+
+    // detiene el proceso si el formulario no esta bien llenado
+    if (this.dataTable.length == 0) {
+      alert(`Favor de llenar el formulario antes de tratar de enviarlo.`);
+      return;
+    }
+
+    this.subscriptions.push(
+      this.fileService.addFileMulti(this.dataTable).subscribe(
+        (response: any) => {
+
+          alert("Se han agregado correctamente los archivos.");
+          this.dataTable = [];
+
+          this.getAllFiles();
+          this.onListUser();
+        },
+        (errorResponse: HttpErrorResponse) => {
+          alert(`Ocurrio un error: ${errorResponse.message}`);
+        }
+      )
+    );
+
+  }
 
   public onFileSave( event: any): void {
     this.fileSave = event.target.files[0];
@@ -153,6 +208,32 @@ export class FileComponent {
     this.hiddenList = true;
     this.hiddenEdit = true;
     this.hiddenAdd = false;
+    this.hiddenAddMulti = true;
+  }
+
+  public toEditMulti(file: FileDataI): void {
+    this.editFile = file
+    this.hiddenEditMulti = false;
+    this.hiddenList = true;
+    this.hiddenEdit = true;
+    this.hiddenAdd = true;
+    this.hiddenAddMulti = true;
+  }
+
+  public toAddMulti(): void {
+    this.hiddenAddMulti = false;
+    this.hiddenEditMulti = true;
+    this.hiddenList = true;
+    this.hiddenEdit = true;
+    this.hiddenAdd = true;
+  }
+
+  public toAddMultiForm(): void {
+    this.hiddenEditMulti = true;
+    this.hiddenList = true;
+    this.hiddenEdit = true;
+    this.hiddenAdd = false;
+    this.hiddenAddMulti = true;
   }
 
   onlogout():void {

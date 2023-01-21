@@ -9,6 +9,7 @@ import { UserComponent } from './user/user.component';
 import { FileComponent } from './file/file.component';
 import { UserService } from '../services/user.service';
 import { FileService } from '../services/file.service';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 @NgModule({
   declarations: [IndexComponent, UserComponent, FileComponent],
@@ -16,7 +17,8 @@ import { FileService } from '../services/file.service';
     CommonModule,
     FormsModule,
     HttpClientModule,
-    CatalogsRoutingModule
+    CatalogsRoutingModule,
+    NgxDatatableModule
   ],
   providers: [
     AuthService,

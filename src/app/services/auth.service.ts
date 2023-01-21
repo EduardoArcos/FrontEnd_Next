@@ -4,7 +4,6 @@ import { UserI } from '../models/user';
 import { JwResponseI } from '../models/jw-response';
 import { tap } from 'rxjs';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Injectable()
 export class AuthService {

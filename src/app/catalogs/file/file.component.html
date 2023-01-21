@@ -25,7 +25,7 @@
     <section class="page-section" id="list" [hidden]="hiddenList">
       <div>
           <div class="row">
-            <div class ="col-md-11 text-center">
+            <div class ="col-md-10 text-center">
               <h2 class="section-heading text-uppercase">Listado de Archivos subidos</h2>
             </div>
             <div class="col-md-1">
@@ -34,6 +34,14 @@
                 class="btn btn-sm btn btn-success"
                 (click)="toAdd()">
                 Agregar
+              </button>
+            </div>
+            <div class="col-md-1">
+              <button
+                type="button"
+                class="btn btn-sm btn btn-success"
+                (click)="toAddMulti()">
+                Agregado M
               </button>
             </div>
           </div>
@@ -127,6 +135,105 @@
         </div>
     </section>
 
+    <!-- Add Multiple-->
+    <section class="page-section" id="add" [hidden]="hiddenAddMulti">
+      <div>
+          <div class="row col-md-12 text-center">
+              <h2 class="section-heading text-uppercase">Agregar Archivo</h2>
+          </div>
+          <div class="row text-center" style="padding-left: 2%; padding-right: 2%;">
+            <form #addFileForm="ngForm">
+              <div>
+
+                <!-- <label for="name"><b>Nombre</b></label>
+                <input type="text" placeholder="Escribe el nombre para identificar el arhivo." name="name" id="name" ngModel required> -->
+
+                <div>
+                  <label for="file"><b>Elije un archivo a subir:</b></label>
+                  <br>
+                  <input type="file" id="file" name="file"
+                  (change)="onFileSaveMulti($event)" multiple ngModel required>
+                </div>
+
+                <div style="padding-top: 10px;">
+
+                  <ngx-datatable
+                    *ngIf="isVisible"
+                    class="bootstrap selection-cell"
+                    id="main-container"
+                    [columnMode]="'force'"
+                    [headerHeight]="50"
+                    [footerHeight]="50"
+                    [rowHeight]="'auto'"
+                    [limit]="entries != -1 ? entries : undefined"
+                    [messages]="{ emptyMessage: 'No hemos encontrado ningún registro.' }"
+                    [rows]="dataTable"
+                    [offset]="tableOffset"
+                    [scrollbarH]="true"
+                  >
+                  <ngx-datatable-column name="#">
+                    <ng-template
+                      let-rowIndex="rowIndex"
+                      let-row="row"
+                      ngx-datatable-cell-template
+                    >
+                      {{ rowIndex + 1 }}
+                    </ng-template>
+                  </ngx-datatable-column>
+                  <ngx-datatable-column name="Nombre" prop="name">
+                  </ngx-datatable-column>
+                  <ngx-datatable-column name="Acciones">
+                    <ng-template
+                      let-row="row"
+                      let-value="value"
+                      ngx-datatable-cell-template
+                    >
+                      <button
+                        class="btn btn-sm btn-secondary"
+                        title="editbutton"
+                        style="margin-right: 10px;"
+                        (click)="toEditMulti(row)"
+                        name="MultiEdit"
+                        id="MultiEdit"
+                      >
+                        <i class="fas fa-edit"></i>
+                      </button>
+
+                      <button
+                        class="btn btn-sm btn-danger"
+                        data-placement="top"
+                        data-original-title="Delete"
+                        title="deletebutton"
+                      >
+                        <i class="fa fa-trash"></i>
+                      </button>
+                    </ng-template>
+                  </ngx-datatable-column>
+                  </ngx-datatable>
+                </div>
+
+                <hr>
+
+                <div class="col-md-12">
+                  <button type="submit"
+                    class="btn btn-success paddingButton"
+                    (click)="onAddFileMulti()">
+                    Guardar
+                  </button>
+                  <button type="button"
+                    class="btn btn-danger"
+                    (click)="onListUser()">
+                    Regresar
+                  </button>
+                </div>
+              </div>
+
+            </form>
+
+          </div>
+        </div>
+    </section>
+
     <!-- Edit-->
     <section class="page-section" id="edit" [hidden]="hiddenEdit">
       <div>
@@ -160,6 +267,32 @@
                   Regresar
                 </button>
               </div>
+              </div>
+          </div>
+        </div>
+    </section>
+
+    <!-- Edit MultiFilepart -->
+    <section class="page-section" id="edit" [hidden]="hiddenEditMulti">
+      <div>
+          <div class="row col-md-12 text-center">
+              <h2 class="section-heading text-uppercase">Editar Archivo</h2>
+          </div>
+          <div class="row text-center" style="padding-left: 10%;">
+              <div class="col-md-8">
+                <div class="form-group">
+                  <label for="name">Nombre</label>
+                  <input type="text" name="name" required placeholder="Ingesa el nombre"
+                    [(ngModel)]="editFile.name" class="form-control"/>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <button type="button"
+                  class="btn btn-sm btn-success"
+                  (click)="toAddMulti()"
+                  style="margin-top: 35px;">
+                  Guardar
+                </button>
               </div>
           </div>
         </div>

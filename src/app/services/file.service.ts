@@ -43,6 +43,29 @@ export class FileService {
     return this.httpClient.post<FileDataI>(`${this.AUTH_SERVER}file/add`, formData);
   }
 
+  public addFileMulti ( file: FileDataI[] ): Observable<String> {
+
+    const formData = new FormData();
+
+    let array: any[] = [];
+
+    for (let index = 0; index < file.length; index++) {
+
+      array.push(file[index].name);
+
+    }
+    formData.append("name", JSON.stringify(array));
+
+    // For para poder guardar todos los archivos y poder mandarlos en un array
+    for (let index = 0; index < file.length; index++) {
+      const element = file[index].file;
+
+      formData.append('file', element);
+    }
+
+    return this.httpClient.post<String>(`${this.AUTH_SERVER}file/add-file-multiple`, formData);
+  }
+
   public editFile(form: FormData): Observable<FileDataI> {
 
     return this.httpClient.put<FileDataI>(`${this.AUTH_SERVER}file/update`, form);
